@@ -24,9 +24,12 @@ async function initAuth() {
 }
 
 async function sendMagicLink(email) {
+  // location.pathname 까지 포함해야 GitHub Pages의 하위 경로(예: /portfolio-web/)로 정확히 돌아옵니다.
+  // window.location.origin 만 쓰면 경로가 빠져 루트로 리다이렉트되어 404가 납니다.
+  const redirectTo = window.location.origin + window.location.pathname;
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin },
+    options: { emailRedirectTo: redirectTo },
   });
   return error;
 }
