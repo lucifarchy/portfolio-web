@@ -12,13 +12,22 @@ let assetsCache = [];
 // 인증
 // ============================================================
 
+let previousUserId = null;
+
 async function initAuth() {
   const { data: { session } } = await supabase.auth.getSession();
   currentUser = session?.user ?? null;
+  previousUserId = currentUser?.id ?? null;
   render();
 
   supabase.auth.onAuthStateChange((_event, session) => {
-    currentUser = session?.user ?? null;
+    const newUser = session?.user ?? null;
+    const newId = newUser?.id ?? null;
+    // 창 포커스 복귀 시 세션 재확인 등으로 이벤트가 반복 발생하는데,
+    // 실제 로그인 사용자가 바뀐 게 아니면 화면을 다시 그리지 않는다 (탭 상태 유지)
+    if (newId === previousUserId) return;
+    previousUserId = newId;
+    currentUser = newUser;
     render();
   });
 }
