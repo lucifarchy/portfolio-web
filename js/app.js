@@ -59,7 +59,7 @@ function render() {
   } else {
     app.innerHTML = shellTemplate();
     bindShellEvents();
-    loadReferenceData().then(() => switchTab('dashboard'));
+    loadReferenceData().then(() => switchTab(sessionStorage.getItem('activeTab') || 'dashboard'));
   }
 }
 
@@ -121,6 +121,7 @@ function bindShellEvents() {
 }
 
 function switchTab(tab) {
+  sessionStorage.setItem('activeTab', tab); // 재로드되어도 마지막 탭을 기억
   document.querySelectorAll('nav.tabs button').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
